@@ -4,7 +4,7 @@ import skillBank from "../utils/skillsBank.js";
 
 export const atsCheker = async (req, res) => {
   try {
-    const file = req.file?.buffer;
+    const file = req.file;
     const { jobDescription } = req.body;
 
     if (!file || !jobDescription) {
@@ -14,12 +14,30 @@ export const atsCheker = async (req, res) => {
       });
     }
 
-    const resumeText = await parseToText(file);
+    const allowedTypes = ['application/pdf','application/vnd.openxmlformats-officedocument.wordprocessingml.document','application/msword'];
+    if (!allowedTypes.includes(file.mimetype)) {
+        return res.status(400).json({ success: false, message: "Invalid file type. Only PDF and DOCX are allowed." });
+    }
 
-    // Compute the ATS Score using NLP + TF-IDF + Fuzzy
+    if (!jobDescription || typeof jobDescription !== 'string' || jobDescription.length < 10) {
+      return res.status(400).json({ success: false, message: "Valid Job Description is required." });
+    }
+
+    let resumeText = "";
+    try {
+        resumeText = await parseToText(file.buffer);
+    } catch (parseError) {
+        console.error("Parsing failed:", parseError);
+        return res.status(422).json({ success: false, message: "Could not read the resume file. Please ensure it is not corrupted." });
+    }
+
+    if (!resumeText) {
+         return res.status(422).json({ success: false, message: "Resume appears to be empty or unreadable." });
+    }
+
     const result = computeSkillScore(skillBank, resumeText, jobDescription);
 
-    return res.json({
+    return res.status(200).json({
       success: true,
       data: {
         score: result.finalSkillMatch,       

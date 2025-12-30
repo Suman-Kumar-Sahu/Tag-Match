@@ -9,7 +9,6 @@ export const parseToText = async (buffer) => {
             .replace(/\s+/g, " ")
             .toLowerCase()
             .trim();
-
         return text;  
     } catch (error) {
         console.error("PDF parse error:", error);

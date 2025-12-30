@@ -51,9 +51,6 @@ function buildTfidfCorpus(resumeText, jdText) {
   return { resumeCorpus, jdCorpus, tfidf };
 }
 
-// -----------------------------
-// 3. Extract skills
-// -----------------------------
 export function extractSkills(skillBank) {
   return skillBank.map((skill) => ({
     raw: skill,
@@ -61,9 +58,7 @@ export function extractSkills(skillBank) {
   }));
 }
 
-// -----------------------------
-// 4. Compute ATS score
-// -----------------------------
+
 export function computeSkillScore(skillBank, resumeText, jdText) {
   const processedSkills = extractSkills(skillBank);
   const { resumeCorpus, jdCorpus, tfidf } = buildTfidfCorpus(resumeText, jdText);
