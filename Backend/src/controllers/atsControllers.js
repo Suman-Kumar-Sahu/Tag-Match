@@ -1,6 +1,6 @@
 import { parseToText } from "../utils/parsingService.js";
 import { computeSkillScore } from "../utils/matching.js";   
-import skillBank from "../utils/skillsBank.js";              
+import uniqueSkills from "../utils/skillsBank.js";              
 
 export const atsCheker = async (req, res) => {
   try {
@@ -35,13 +35,13 @@ export const atsCheker = async (req, res) => {
          return res.status(422).json({ success: false, message: "Resume appears to be empty or unreadable." });
     }
 
-    const result = computeSkillScore(skillBank, resumeText, jobDescription);
+    const result = computeSkillScore(uniqueSkills, resumeText, jobDescription);
 
     return res.status(200).json({
       success: true,
       data: {
-        score: result.finalSkillMatch,       
-        matchedSkills: result.matchedSkills, 
+        score: result.finalScore,       
+        matchedSkills:  result.matchedSkills, 
       },
     });
   } catch (error) {
