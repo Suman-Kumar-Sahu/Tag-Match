@@ -12,7 +12,7 @@ function preprocess(text) {
     .map((w) => natural.PorterStemmer.stem(w));
 }
 
-function generateNgrams(tokens, n = 2) {
+function generateNgrams(tokens, n = 3) {
   const ngrams = [];
   for (let i = 0; i <= tokens.length - n; i++) {
     ngrams.push(tokens.slice(i, i + n).join(" "));
@@ -26,8 +26,8 @@ function buildTfidfCorpus(resumeText, jdText) {
   const resumeTokens = preprocess(resumeText);
   const jdTokens = preprocess(jdText);
 
-  const resumeCorpus = resumeTokens.concat(generateNgrams(resumeTokens, 2)).join(" ");
-  const jdCorpus = jdTokens.concat(generateNgrams(jdTokens, 2)).join(" ");
+  const resumeCorpus = resumeTokens.concat(generateNgrams(resumeTokens, 2)).concat(generateNgrams(resumeTokens, 3)).join(" ");
+  const jdCorpus = jdTokens.concat(generateNgrams(jdTokens, 2)).concat(generateNgrams(jdTokens, 3)).join(" ");
 
   tfidf.addDocument(resumeCorpus, "resume");
   tfidf.addDocument(jdCorpus, "job");
@@ -59,16 +59,10 @@ export function computeSkillScore(skillBank, resumeText, jdText) {
     };
   }
 
-  console.log('=== ATS SCORE DEBUGGING ===');
-  console.log('Resume length:', resumeText.length);
-  console.log('JD length:', jdText.length);
-  console.log('Skill bank size:', skillBank.length);
 
   const processedSkills = extractSkills(skillBank);
   const { resumeCorpus, jdCorpus, tfidf, resumeTokens, jdTokens } = buildTfidfCorpus(resumeText, jdText);
 
-  console.log('Resume tokens:', resumeTokens.length);
-  console.log('JD tokens:', jdTokens.length);
   console.log('Sample JD tokens:', jdTokens.slice(0, 10).join(', '));
 
   const maxTfidf = Math.max(
@@ -84,12 +78,10 @@ export function computeSkillScore(skillBank, resumeText, jdText) {
   const jdTokenSet = new Set(jdTokens);
 
   let matchedSkills = [];
-  const MATCH_THRESHOLD = 0.10; 
+  const MATCH_THRESHOLD = 0.12; 
 
   const resumeLower = resumeText.toLowerCase();
   const jdLower = jdText.toLowerCase();
-
-  console.log('\n🎯 Skill Matching:');
 
   processedSkills.forEach((skill) => {
     const skillToken = skill.token;
@@ -134,8 +126,8 @@ export function computeSkillScore(skillBank, resumeText, jdText) {
   });
   matchedSkills = Array.from(skillMap.values());
 
-  console.log('Total matched skills:', matchedSkills.length);
-  console.log('Sample matches:', matchedSkills.slice(0, 5).map(s => `${s.skill} (${s.relevance})`));
+  // console.log('Total matched skills:', matchedSkills.length);
+  // console.log('Sample matches:', matchedSkills.slice(0, 5).map(s => `${s.skill} (${s.relevance})`));
 
   const jdSkills = processedSkills.filter(skill => {
     const skillLower = skill.raw.toLowerCase();
@@ -144,19 +136,17 @@ export function computeSkillScore(skillBank, resumeText, jdText) {
     return inJDExact || inJDTfidf;
   });
 
-  console.log('Skills found in JD:', jdSkills.length);
-  console.log('Sample JD skills:', jdSkills.slice(0, 5).map(s => s.raw));
+  // console.log('Skills found in JD:', jdSkills.length);
+  // console.log('Sample JD skills:', jdSkills.slice(0, 5).map(s => s.raw));
 
   const matchedSkillNames = new Set(matchedSkills.map(m => m.skill));
   const matchedInResume = jdSkills.filter(skill => matchedSkillNames.has(skill.raw));
 
-  console.log('Matched in resume:', matchedInResume.length);
+  // console.log('Matched in resume:', matchedInResume.length);
 
-  const skillCoverage = jdSkills.length > 0 
-    ? (matchedInResume.length / jdSkills.length) * 100 
-    : 0;
+  const skillCoverage = jdSkills.length > 0  ? (matchedInResume.length / jdSkills.length) * 100 : 0;
 
-  console.log('Skill coverage:', skillCoverage.toFixed(2) + '%');
+  // console.log('Skill coverage:', skillCoverage.toFixed(2) + '%');
 
   const textSimilarity = stringSimilarity.compareTwoStrings(resumeCorpus, jdCorpus);
 
