@@ -1,51 +1,79 @@
+// skillsBank.js - Use normalized versions
 const skillBank = {
   programming: [
-    "javascript", "typescript", "python", "java", "c++", "c", "ruby",
-    "go", "php", "sql"
+    "JavaScript", "TypeScript", "Python", "Java", 
+    "CPlusPlus", "CSharp", "C",  // ✅ Normalized
+    "Ruby", "Go", "Golang", "PHP", "Rust", "Swift", "Kotlin"
   ],
 
   frontend: [
-    "html", "css", "scss", "bootstrap", "tailwind", "material ui",
-    "react", "react.js", "next.js", "redux", "context api",
-    "typescript", "vite", "webpack"
+    "HTML", "HTML5", "CSS", "CSS3", "SCSS", "Sass",
+    "Bootstrap", "TailwindCSS", "Tailwind", "MaterialUI", "MUI",  
+    "React", "Reactjs", "Nextjs", "Nuxtjs",  
+    "Vue", "Vuejs", "Angular", "Svelte",  
+    "Redux", "ContextAPI", "Zustand", "Recoil",
+    "Webpack", "Vite", "Parcel", "Babel"
   ],
 
   backend: [
-    "node.js", "node", "express", "rest api", "graphql",
-    "microservices", "authentication", "authorization",
-    "jwt", "bcrypt", "session management"
+    "Nodejs", "Node", "Express", "Expressjs", "Fastify", 
+    "Nestjs", "Koa",
+    "RESTAPI", "RESTful", "GraphQL", "gRPC", "WebSocket",
+    "Microservices", "Serverless",
+    "Authentication", "Authorization", "OAuth", "OAuth2",
+    "JWT", "bcrypt", "Passportjs",  
+    "SessionManagement", "Cookie", "CORS"
   ],
 
   databases: [
-    "mongodb", "mongoose", "mysql", "postgresql", "postgres",
-    "sqlite", "redis", "firebase"
+    "MongoDB", "Mongoose",
+    "MySQL", "PostgreSQL", "Postgres", "SQL",
+    "SQLite", "Redis", "Firebase", "Firestore", "Supabase"
   ],
 
   cloud: [
-    "aws", "azure", "gcp", "cloud functions",
-    "lambda", "ec2", "s3", "cloudfront"
+    "AWS", "Azure", "GCP",
+    "Lambda", "EC2", "S3", "CloudFront",
+    "Heroku", "Vercel", "Netlify"
   ],
 
   devops: [
-    "docker", "kubernetes", "k8s", "jenkins",
-    "ci/cd", "git", "github actions", "terraform", "ansible"
+    "Docker", "Kubernetes", "K8s",
+    "Jenkins", "GitHubActions", "CircleCI", 
+    "CICD", "Terraform", "Ansible",
+    "Nginx", "Apache", "Linux"
+  ],
+
+  versionControl: [
+    "Git", "GitHub", "GitLab", "Bitbucket"
   ],
 
   testing: [
-    "jest", "mocha", "chai", "cypress", "playwright",
-    "unit testing", "integration testing"
+    "Jest", "Mocha", "Chai", "Cypress", "Playwright", "Selenium",
+    "UnitTesting", "IntegrationTesting", "E2ETesting",  
+    "TDD", "BDD"
   ],
 
   tools: [
-    "git", "github", "postman", "jira", "notion",
-    "figma", "visual studio code", "vscode"
+    "VSCode", "Postman", "Jira", "Notion", "Figma", "Slack"
+  ],
+
+  concepts: [
+    "OOP", "FunctionalProgramming",  
+    "DataStructures", "Algorithms",  
+    "DesignPatterns", "SOLIDPrinciples",  
+    "Agile", "Scrum", "Kanban",
+    "APIDesign", "SystemDesign",
   ],
 
   softSkills: [
-    "communication", "teamwork", "problem solving",
-    "leadership", "adaptability", "time management",
-    "critical thinking"
+    "Communication", "Teamwork", "ProblemSolving",  
+    "Leadership", "Adaptability", "TimeManagement",  
+    "CriticalThinking"  
   ],
 };
 
-export default Object.values(skillBank).flat();
+const allSkills = Object.values(skillBank).flat();
+const uniqueSkills = [...new Set(allSkills)];
+
+export default uniqueSkills;
