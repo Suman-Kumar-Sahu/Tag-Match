@@ -126,9 +126,6 @@ export function computeSkillScore(skillBank, resumeText, jdText) {
   });
   matchedSkills = Array.from(skillMap.values());
 
-  // console.log('Total matched skills:', matchedSkills.length);
-  // console.log('Sample matches:', matchedSkills.slice(0, 5).map(s => `${s.skill} (${s.relevance})`));
-
   const jdSkills = processedSkills.filter(skill => {
     const skillLower = skill.raw.toLowerCase();
     const inJDExact = jdLower.includes(skillLower);
@@ -136,20 +133,13 @@ export function computeSkillScore(skillBank, resumeText, jdText) {
     return inJDExact || inJDTfidf;
   });
 
-  // console.log('Skills found in JD:', jdSkills.length);
-  // console.log('Sample JD skills:', jdSkills.slice(0, 5).map(s => s.raw));
 
   const matchedSkillNames = new Set(matchedSkills.map(m => m.skill));
   const matchedInResume = jdSkills.filter(skill => matchedSkillNames.has(skill.raw));
 
-  // console.log('Matched in resume:', matchedInResume.length);
-
   const skillCoverage = jdSkills.length > 0  ? (matchedInResume.length / jdSkills.length) * 100 : 0;
 
-  // console.log('Skill coverage:', skillCoverage.toFixed(2) + '%');
-
   const textSimilarity = stringSimilarity.compareTwoStrings(resumeCorpus, jdCorpus);
-
 
   const missingSkills = jdSkills.filter(s => !matchedSkillNames.has(s.raw));
 
