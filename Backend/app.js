@@ -4,7 +4,8 @@ import atsRoutes from './src/routes/atsRoutes.js';
 
 const app = express();
 app.use(cors({
-    origin:"http://localhost:5173",
+    origin:"https://tag-match-frontend.onrender.com",
+    //"http://localhost:5173" 
     credentials:true
 }))
 app.use(express.json());
