@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:3000/api/ats", 
+  baseURL: "https://tag-match.onrender.com", 
 });
 
 export const uploadResume = (data) => {
