@@ -3,7 +3,7 @@ import FileUpload from "./componets/FileUpload";
 import JobDescription from "./componets/JobDescription";
 import Loader from "./componets/Loader";
 import ResultCard from "./componets/ResultCard";
-import { uploadResume } from "./utils/api.js";
+import { uploadResume, aiAnalyzeResume } from "./utils/api.js";
 
 function App() {
   const [resume, setResume] = useState(null);
@@ -27,8 +27,17 @@ function App() {
 
     try {
       const { data } = await uploadResume(formData);
-      setResult(data);
+      const {score,matchedskill,resumeText} = data.data;
+
+      const aiRes = await aiAnalyzeResume({ resumeText, jobDescription: jd });
+      console.log("AI response:", aiRes.data);
+      setResult({
+        score,
+        matchedskill,
+        ...aiRes.data
+      });
     } catch (err) {
+      console.error("Full error:", err.response);
       alert("Error checking ATS score!");
     }
 

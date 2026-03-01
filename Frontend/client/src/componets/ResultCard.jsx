@@ -11,9 +11,17 @@ const ResultCard = ({ result }) => {
   const progress = Math.max(0, Math.min(100, Math.round(score)));
   const offset = circumference - (progress / 100) * circumference;
 
-  const missing = (result.matchedSkills && result.matchedSkills.filter(s => s.relevance < 0.45).map(s => s.skill)) || [];
-  const strong = (result.matchedSkills && result.matchedSkills.filter(s => s.relevance >= 0.75).map(s => s.skill)) || [];
-  const low = (result.matchedSkills && result.matchedSkills.filter(s => s.relevance >=0.45 && s.relevance < 0.75).map(s => s.skill)) || [];
+  const missing = result.missing?.length
+    ? result.missing
+    : result.matchedSkills?.filter(s => s.relevance < 0.45).map(s => s.skill) || [];
+
+  const strong = result.strongMatch?.length
+    ? result.strongMatch
+    : result.matchedSkills?.filter(s => s.relevance >= 0.75).map(s => s.skill) || [];
+
+  const low = result.lowMatch?.length
+    ? result.lowMatch
+    : result.matchedSkills?.filter(s => s.relevance >= 0.45 && s.relevance < 0.75).map(s => s.skill) || [];
 
   return (
     <div className="p-6 rounded-xl bg-gray-900 text-gray-100 shadow-lg w-full flex flex-col items-center text-center">
@@ -41,29 +49,33 @@ const ResultCard = ({ result }) => {
           <h3 className="text-xl font-semibold text-gray-200 mb-3">Keyword Gaps & Suggestions</h3>
 
           <ul className="space-y-2">
-            {missing.length > 0 ? (
-              missing.slice(0,3).map((m, i) => (
-                <li key={i} className="flex items-center justify-center text-sm text-gray-300">
-                  <span className="w-6 h-6 rounded-full bg-red-600 flex items-center justify-center mr-3">✖</span>
-                  Missing: "{m}"
-                </li>
-              ))
-            ) : (
-              <>
-                <li className="flex items-center justify-center text-sm text-gray-300"><span className="w-6 h-6 rounded-full bg-red-600 flex items-center justify-center mr-3">✖</span>Missing: "Project Management"</li>
-                <li className="flex items-center justify-center text-sm text-gray-300"><span className="w-6 h-6 rounded-full bg-amber-500 flex items-center justify-center mr-3">!</span>Low Match: "Agile Methologies"</li>
-                <li className="flex items-center justify-center text-sm text-gray-300"><span className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center mr-3">✔</span>Strong Match: "Software Development"</li>
-              </>
-            )}
+            {[
+              { list: missing, color: "bg-red-600",     icon: "✖", label: "Missing" },
+              { list: low,     color: "bg-amber-500",   icon: "!", label: "Low Match" },
+              { list: strong,  color: "bg-emerald-500", icon: "✔", label: "Strong Match" },
+            ].filter(({ list }) => list.length > 0).map(({ list, color, icon, label }) => (
+              <li key={label} className="flex items-start text-sm text-gray-300">
+                <span className={`w-6 h-6 rounded-full ${color} flex items-center justify-center mr-3 mt-0.5 shrink-0`}>
+                  {icon}
+                </span>
+                <span className="text-left">
+                  <span className="text-gray-400 mr-1">{label}:</span>
+                  {list.slice(0, 2).join(", ")}
+                </span>
+              </li>
+            ))}
           </ul>
 
-          <div className="mt-6 border-t border-gray-800 pt-4 text-left md:text-center">
-            <h4 className="text-sm font-semibold text-gray-200 mb-2">Resume Formatting Tips</h4>
-            <ul className="text-sm text-gray-300 list-disc list-inside space-y-1">
-              <li>Add a Summary Section</li>
-              <li>Quantify Achievements</li>
-            </ul>
-          </div>
+          {result.tips?.length > 0 && (
+            <div className="mt-4 border-t border-gray-800 pt-4 text-left">
+              <h4 className="text-sm font-semibold text-gray-200 mb-2">💡 Improvement Tips</h4>
+              <ul className="text-sm text-gray-400 space-y-1 list-disc list-inside">
+                {result.tips.map((tip, i) => (
+                  <li key={i}>{tip}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </div>
     </div>

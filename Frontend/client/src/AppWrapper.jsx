@@ -3,6 +3,7 @@ import { AnimatePresence } from "framer-motion";
 import Landing from "./pages/Landing";
 import AppPage from "./pages/AppPage";
 
+
 export default function AppWrapper() {
   const [showLanding, setShowLanding] = useState(true);
 

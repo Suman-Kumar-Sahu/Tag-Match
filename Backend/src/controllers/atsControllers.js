@@ -50,6 +50,7 @@ export const atsCheker = async (req, res) => {
       data: {
         score: result.finalScore,       
         matchedSkills:  result.matchedSkills, 
+        resumeText:resumeText
       },
     });
   } catch (error) {
