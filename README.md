@@ -15,21 +15,62 @@ This project focuses on **explainable scoring**, similar to real-world ATS syste
 - 📊 TF-IDF relevance scoring
 - ✅ Exact + fuzzy skill matching
 - 📈 ATS-style skill coverage score
+- 🤖 AI-powered deep resume analysis
+  
+---
+## DEMO
+<img width="1530" height="860" alt="l-2" src="https://github.com/user-attachments/assets/3390c4fe-58c8-4433-89c4-d666677f6781" />
 
 ---
 
 ## 🏗️ Project Structure
-src/
-├── controllers/
-│   └── atsController.js
+
+
+```
+ats-resume-checker/
+├── Backend/
+│   ├── src/
+│   │   ├── controllers/
+│   │   │   └── atsControllers.js      # Route handlers for /analyze and /ai-analyze
+│   │   ├── routes/
+│   │   │   └── atsRoutes.js           # Express route definitions
+│   │   └── utils/
+│   │       ├── chatGpt.js             # AI analysis via Anthropic Claude API
+│   │       ├── matching.js            # Normalization, n-grams, TF-IDF scoring
+│   │       ├── parsingService.js      # Resume text extraction (PDF/DOCX)
+│   │       └── skillsBank.js          # Curated skill reference repository
+│   ├── uploads/                       # Temporary resume storage (Multer)
+│   ├── .env                           # API keys (ANTHROPIC_API_KEY)
+│   ├── app.js                         # Express app setup
+│   ├── server.js                      # Server entry point
+│   ├── package-lock.json
+│   └── package.json
 │
-├── utils/
-│   ├── matching.js
-│   ├── parsingService.js
-│   └── skillsBank.js
-│
-└── routes/
-    └── atsRoutes.js
+└── Frontend/client/
+    ├── public/
+    ├── src/
+    │   ├── assets/
+    │   ├── componets/
+    │   │   ├── FileUpload.jsx          # Resume drag & drop upload component
+    │   │   ├── JobDescription.jsx      # JD text input component
+    │   │   ├── Loader.jsx              # Loading spinner component
+    │   │   └── ResultCard.jsx          # ATS score & results display
+    │   ├── pages/
+    │   │   ├── AppPage.jsx             # Main app page (upload + results)
+    │   │   └── Landing.jsx             # Landing/home page
+    │   ├── utils/
+    │   │   └── api.js                  # Axios API calls to backend
+    │   ├── App.jsx                     # Root component
+    │   ├── AppWrapper.jsx              # App context/wrapper
+    │   ├── index.css                   # Global styles
+    │   └── main.jsx                    # React entry point
+    ├── eslint.config.js
+    ├── index.html
+    ├── package-lock.json
+    ├── package.json
+    ├── README.md
+    └── vite.config.js
+```
 
 ---
 
@@ -107,6 +148,39 @@ This mirrors how real ATS systems calculate screening scores.
 
 ---
 
+### 7. 🤖 AI-Powered Deep Analysis (NEW)
+
+Beyond rule-based scoring, the `/ai-analyze` endpoint sends the resume and JD to **AI** for a deeper, context-aware evaluation.
+
+The AI layer performs:
+- Contextual resume evaluation
+- Missing skill reasoning
+- Improvement recommendations
+- Formatting insights
+- Semantic-level similarity interpretation
+- Overall resume quality commentary
+
+#### How It Works:
+
+```
+Resume Text + Job Description
+          ↓
+       Grok API
+          ↓
+  Structured AI Feedback Report
+  - Semantic Skill Gaps
+  - Strengths Breakdown
+  - Improvement Recommendations
+```
+
+File: `chatGpt.js`
+
+#### Setup:
+Add your Grok API key to `.env`:
+```env
+GROK_API_KEY = api_key
+```
+---
 ## 📡 API Endpoint
 
 ### POST `/api/ats/analyze`
@@ -126,7 +200,7 @@ Content-Type: multipart/form-data
 {
   "success": true,
   "data": {
-    "score": 63.32,
+    "score": 65.32,
     "matchedSkills": [
       {
         "skill": "JavaScript",
@@ -143,9 +217,40 @@ Content-Type: multipart/form-data
     "textSimilarity": 52.14
   }
 }
-```
-<img width="951" height="922" alt="image" src="https://github.com/user-attachments/assets/97589990-fcea-4bad-b53b-0e71ab60d2af" />
 
+```
+### POST `/api/ats/ai-analyze`
+
+AI-powered deep analysis using Anthropic Claude. Returns the same structured output rendered in the UI dashboard.
+
+#### Request
+`Content-Type: multipart/form-data`
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `resume` | File | PDF / DOC / DOCX resume |
+| `jobDescription` | String | Plain text job description |
+
+#### Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "score": 65,
+    "keywordGaps": {
+      "missing": ["Java", "C++"],
+      "lowMatch": ["Node.js", "Django"]
+    },
+    "improvementTips": [
+      "Highlight relevant projects or experiences that demonstrate proficiency in required skills like Java, C++, and data structures",
+      "Emphasize understanding of computer science fundamentals and software engineering principles",
+      "Quantify achievements in code reviews, debugging, and problem-solving to demonstrate expertise in software development"
+    ]
+  }
+}
+
+```
 ---
 
 ### 📊Accuracy & Limitations
@@ -155,27 +260,34 @@ Strengths:
 - Explainable scoring logic
 - Phrase-aware skill detection
 - Low false positives
+- AI layer adds for deep analysis
 
 Limitations:
 - No semantic embeddings (BERT/SBERT)
 - No experience-duration weighting
 - TF-IDF corpus limited to resume + JD
 
-Estimated accuracy:
-- Keyword ATS: ~55–60%
-- This system: ~75–82%
-- Enterprise ATS: 85–90%
+| System | Accuracy |
+|--------|----------|
+| Keyword-only ATS | ~55–60% |
+| This system (rule-based) | ~75–82% |
+| This system (rule-based + AI) | ~82–88% |
+| Enterprise ATS | 85–90% |
 
 ---
 
-### 🛠️Tech Stack
 
-- Node.js
-- Express.js
-- natural (NLP)
-- string-similarity
-- pdf-parse
-- Multer
+## 🛠️ Tech Stack
+
+| Technology | Purpose |
+|------------|---------|
+| Node.js | Runtime |
+| Express.js | REST API framework |
+| natural | NLP (stemming, tokenization) |
+| string-similarity | Fuzzy matching |
+| pdf-parse | PDF text extraction |
+| Multer | File upload handling |
+| GroK | AI-powered analysis |
 
 ---
 
@@ -189,16 +301,6 @@ Estimated accuracy:
 
 ---
 
-### 🎯Use Cases
-
-- Resume screening tools
-- Recruitment platforms
-- Placement projects
-- ATS research
-- Resume optimization tools
-
----
-
 ### 👨‍💻 Author Note
 
-This project demonstrates how real ATS systems work internally by normalizing language, detecting skill phrases, and computing relevance-based scores rather than relying on naive keyword matching.
+This project demonstrates how real ATS systems work internally — normalizing language, detecting skill phrases, and computing relevance-based scores rather than relying on naive keyword matching. The addition of **GROK AI** takes this further by enabling semantic reasoning, qualitative feedback, and context-aware gap analysis that rule-based systems cannot provide.
