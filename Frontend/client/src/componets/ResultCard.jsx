@@ -15,16 +15,12 @@ const ResultCard = ({ result }) => {
     ? result.missing
     : result.matchedSkills?.filter(s => s.relevance < 0.45).map(s => s.skill) || [];
 
-  const strong = result.strongMatch?.length
-    ? result.strongMatch
-    : result.matchedSkills?.filter(s => s.relevance >= 0.75).map(s => s.skill) || [];
-
   const low = result.lowMatch?.length
     ? result.lowMatch
     : result.matchedSkills?.filter(s => s.relevance >= 0.45 && s.relevance < 0.75).map(s => s.skill) || [];
 
   return (
-    <div className="p-6 rounded-xl bg-gray-900 text-gray-100 shadow-lg w-full flex flex-col items-center text-center">
+    <div className="p-6 mt-1.5 rounded-xl bg-gray-900 text-gray-100 shadow-lg w-full flex flex-col items-center text-center">
       <div className="flex flex-col items-center gap-6 w-full">
         <div className="relative w-[140px] h-[140px]">
           <svg width="140" height="140" viewBox="0 0 140 140" className="block mx-auto">
@@ -52,7 +48,6 @@ const ResultCard = ({ result }) => {
             {[
               { list: missing, color: "bg-red-600",     icon: "✖", label: "Missing" },
               { list: low,     color: "bg-amber-500",   icon: "!", label: "Low Match" },
-              { list: strong,  color: "bg-emerald-500", icon: "✔", label: "Strong Match" },
             ].filter(({ list }) => list.length > 0).map(({ list, color, icon, label }) => (
               <li key={label} className="flex items-start text-sm text-gray-300">
                 <span className={`w-6 h-6 rounded-full ${color} flex items-center justify-center mr-3 mt-0.5 shrink-0`}>

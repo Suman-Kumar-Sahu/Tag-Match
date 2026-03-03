@@ -53,43 +53,47 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-800 via-gray-900 to-black py-12 px-4 flex items-center justify-center">
-      <div className={`w-full ${result ? "max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-8" : "max-w-xl flex flex-col items-center"}`}>
-        <div className={`space-y-6 flex flex-col items-center text-center ${result ? "w-full" : "w-full"}`}>
+    <div className="min-h-screen bg-gradient-to-b from-gray-800 via-gray-900 to-black py-12 px-4">
+      <div className="max-w-5xl mx-auto">
+        <div className="text-center mb-8">
           <h1 className="text-3xl font-extrabold text-teal-300 mb-2">ATS Resume Checker</h1>
-          <p className="text-sm text-gray-300 max-w-xl mx-auto">Quickly compare your resume against a job description, receive an ATS score, keyword suggestions, and formatting tips to improve match rate.</p>
-
-            <div className={`${result ? "w-full max-w-xl mx-auto" : "w-full"}`}>
-              <FileUpload setResume={setResume} resetKey={resetKey} />
-              <JobDescription jd={jd} setJd={setJd} />
-
-              <div className="mt-4 flex flex-col sm:flex-row gap-3">
-                <button
-                  onClick={handleCheck}
-                  className="flex-1 py-3 bg-teal-500 hover:bg-teal-600 text-white font-bold rounded-lg shadow"
-                >
-                  Check ATS Score
-                </button>
-
-                <button
-                  onClick={handleClear}
-                  className="flex-1 py-3 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-lg shadow"
-                >
-                  Clear All
-                </button>
-              </div>
-
-              {loading && <Loader />}
-            </div>
+          <p className="text-sm text-gray-300 max-w-xl mx-auto">
+            Quickly compare your resume against a job description, receive an ATS score,
+            keyword suggestions, and formatting tips to improve match rate.
+          </p>
         </div>
 
-        {result && (
-          <div className="flex items-center justify-center">
-            <div className="w-full max-w-md">
+        <div className={`${result ? "grid grid-cols-2 gap-8 items-start" : "flex justify-center"}`}>
+
+          <div className="flex flex-col gap-4">
+            <FileUpload setResume={setResume} resetKey={resetKey} />
+            <JobDescription jd={jd} setJd={setJd} />
+
+            <div className="flex gap-3">
+              <button
+                onClick={handleCheck}
+                className="flex-1 py-3 bg-teal-500 hover:bg-teal-600 text-white font-bold rounded-lg shadow"
+              >
+                Check ATS Score
+              </button>
+              <button
+                onClick={handleClear}
+                className="flex-1 py-3 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-lg shadow"
+              >
+                Clear All
+              </button>
+            </div>
+
+            {loading && <Loader />}
+          </div>
+
+          {result && (
+            <div className="self-start">
               <ResultCard result={result} />
             </div>
-          </div>
-        )}
+          )}
+
+        </div>
       </div>
     </div>
   );

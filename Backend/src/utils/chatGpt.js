@@ -14,14 +14,12 @@ export const chatWithAi = async (req, res) => {
         {
           "missing": [],
           "lowMatch": [],
-          "strongMatch": [],
           "tips": []
         }
 
         Rules:
         - missing: skills/keywords in job description but not in resume
         - lowMatch: skills partially matching or weakly mentioned
-        - strongMatch: skills clearly present in both
         - tips: 3 short actionable tips to improve the resume for this specific job
 
         Resume:
